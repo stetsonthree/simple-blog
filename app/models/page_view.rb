@@ -1,13 +1,23 @@
 class PageView < Impression
 
   # TODO:
-  # 1. Define scope for counts for last 7 days (or custom range)
-  # 2. Define scope for unique counts for last 7 days
-  # 3. Define scope for page ranks by count
-  # 4. Define scope for page ranks by unique count
+  # 1. Define scope for page ranks by count
+  # 2. Define scope for page ranks by unique count
 
   scope :for_type, -> (type) do
     where(impressionable_type: type)
+  end
+
+  scope :for_date_range, -> (start_date, end_date) do
+    where(created_at: start_date.beginning_of_day..end_date.end_of_day)
+  end
+
+  scope :count_by_date, -> () do
+    group('date(created_at)').count
+  end
+  
+  scope :uniq_count_by_date, -> () do
+    select(:ip_address).distinct.group('date(created_at)').count
   end
 
 end
